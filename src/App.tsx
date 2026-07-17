@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'motion/react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import Marquee from './components/Marquee';
 import Services from './components/Services';
 import Portfolio from './components/Portfolio';
 import CaseStudies from './components/CaseStudies';
 import ThumbnailsWall from './components/ThumbnailsWall';
 import Timeline from './components/Timeline';
 import Testimonials from './components/Testimonials';
-import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import { Language } from './types';
@@ -253,14 +251,11 @@ export default function App() {
         {/* Hero Section */}
         <Hero lang={lang} isStarted={isStarted} />
 
-        {/* Brand Scrolling Marquee */}
-        <Marquee lang={lang} />
+        {/* Curated Portfolio (معرض أعمالنا) */}
+        <Portfolio lang={lang} />
 
         {/* Flagship Case Studies (الهوية البصرية) */}
         <CaseStudies lang={lang} />
-
-        {/* Curated Portfolio (أعمالنا) */}
-        <Portfolio lang={lang} />
 
         {/* Thumbnails bento grid (أغلفة اليوتيوب) */}
         <ThumbnailsWall lang={lang} />
@@ -273,9 +268,6 @@ export default function App() {
 
         {/* Testimonials Carousel (آراء شركاء النجاح) */}
         <Testimonials lang={lang} />
-
-        {/* FAQ Accordion list (الأسئلة الشائعة) */}
-        <FAQ lang={lang} />
 
         {/* Interactive Brief questionnaire (تواصل معنا) */}
         <Contact lang={lang} />

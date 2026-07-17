@@ -12,7 +12,7 @@ interface CaseStudiesProps {
   lang: Language;
 }
 
-type TabType = 'facebook' | 'youtube' | 'thumbnails' | 'motion';
+type TabType = 'facebook' | 'youtube' | 'thumbnails' | 'facebook_page';
 
 export default function CaseStudies({ lang }: CaseStudiesProps) {
   const [activeTab, setActiveTab] = useState<TabType>('facebook');
@@ -103,16 +103,16 @@ export default function CaseStudies({ lang }: CaseStudiesProps) {
           </button>
 
           <button
-            onClick={() => setActiveTab('motion')}
+            onClick={() => setActiveTab('facebook_page')}
             className={`flex-1 min-w-[130px] px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
-              activeTab === 'motion'
+              activeTab === 'facebook_page'
                 ? 'bg-gradient-to-r from-[#FF2D7A] to-[#FF8A00] text-white shadow-md'
                 : 'text-[#1A0B2E]/70 dark:text-gray-400 hover:text-[#1A0B2E] dark:hover:text-white hover:bg-black/[0.02] dark:hover:bg-white/[0.01]'
             }`}
-            id="tab-btn-motion"
+            id="tab-btn-facebook-page"
           >
-            <Sparkles size={16} />
-            <span>{lang === 'ar' ? "موشن ومقدمات" : "Motion Specs"}</span>
+            <Share2 size={16} />
+            <span>{lang === 'ar' ? "صفحة الفيسبوك" : "Facebook Page"}</span>
           </button>
         </div>
 
@@ -213,36 +213,10 @@ export default function CaseStudies({ lang }: CaseStudiesProps) {
                   </div>
 
                   {/* Description Info and Mock Posts */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
                     
-                    {/* Left box: page introduction */}
-                    <div className="lg:col-span-5 space-y-6">
-                      <div className="bg-black/5 dark:bg-white/[0.01] border border-[#1A0B2E]/10 dark:border-white/5 p-6 rounded-2xl space-y-4">
-                        <h4 className="text-sm font-bold text-[#1A0B2E] dark:text-white border-b border-[#1A0B2E]/5 dark:border-white/5 pb-2">
-                          {lang === 'ar' ? "نبذة وتفاصيل الهوية" : "About & Specs"}
-                        </h4>
-                        <p className="text-xs md:text-sm text-[#1A0B2E]/80 dark:text-gray-400 leading-relaxed font-light">
-                          {taglineClean}
-                        </p>
-                        <div className="text-xs space-y-2 text-[#1A0B2E]/70 dark:text-gray-400 font-semibold font-mono">
-                          <div className="flex justify-between">
-                            <span>{lang === 'ar' ? "دقة الشعار:" : "Logo Resolution:"}</span>
-                            <span className="text-[#1A0B2E] dark:text-white">SVG / Vector</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>{lang === 'ar' ? "توزيع الألوان:" : "Primary Palette:"}</span>
-                            <span className="text-brand-secondary">#FF2D7A • #FF8A00</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>{lang === 'ar' ? "نوع التعديل:" : "Identity Style:"}</span>
-                            <span className="text-brand-secondary">Fluid Futuristic Glass</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right box: Mock Facebook Post showing absolute visual consistency */}
-                    <div className="lg:col-span-7">
+                    {/* Centered box: Mock Facebook Post showing absolute visual consistency */}
+                    <div className="w-full">
                       <div className="bg-black/5 dark:bg-white/[0.01] border border-[#1A0B2E]/10 dark:border-white/5 p-6 rounded-2xl space-y-4">
                         <div className="flex items-center gap-3">
                           <img
@@ -499,100 +473,96 @@ export default function CaseStudies({ lang }: CaseStudiesProps) {
               </motion.div>
             )}
 
-            {/* TAB 4: INTRO & ANIMATED ASSETS DECK */}
-            {activeTab === 'motion' && (
+            {/* TAB 4: FACEBOOK COVER & PROMO DECK */}
+            {activeTab === 'facebook_page' && (
               <motion.div
-                key="motion-tab"
+                key="facebook-page-tab"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.4 }}
                 className="grid grid-cols-1 lg:grid-cols-12 gap-8"
-                id="motion-blueprint-panel"
+                id="facebook-page-blueprint-panel"
               >
-                {/* Vertical Phone Reels View */}
-                <div className="lg:col-span-5 space-y-4">
+                {/* Full-width Cover Preview */}
+                <div className="lg:col-span-12 space-y-4">
                   <div className="text-center md:text-start">
                     <span className="text-[10px] font-mono text-brand-purple dark:text-brand-secondary font-bold uppercase tracking-widest block">
-                      {lang === 'ar' ? "موشن جرافيك للهواتف" : "9:16 KINETIC ENGINE"}
+                      {lang === 'ar' ? "تصميم غلاف صفحة فيسبوك" : "FACEBOOK COVER BRANDING MOCKUP"}
                     </span>
-                    <h3 className="text-lg font-extrabold text-[#1A0B2E] dark:text-white mt-1">
-                      {lang === 'ar' ? "ريلز قصيرة بهوية سينمائية" : "Cinematic Kinetic Reels"}
+                    <h3 className="text-xl font-extrabold text-[#1A0B2E] dark:text-white mt-1">
+                      {lang === 'ar' ? "تصميم غلاف بانورامي فخم وعريض" : "Premium Panoramic Facebook Cover Banner"}
                     </h3>
                   </div>
 
-                  {/* Device mockup holding video player */}
-                  <div className="relative mx-auto max-w-[280px] aspect-[9/16] rounded-[40px] border-8 border-white/5 dark:border-white/10 bg-black overflow-hidden shadow-2xl">
-                    {/* Speaker grill */}
-                    <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 h-3.5 bg-[#1A0B2E] dark:bg-[#0c0415] rounded-full z-30 flex items-center justify-center">
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                    </div>
-                    {/* Content inside phone screen */}
-                    <div className="w-full h-full relative z-10">
-                      <iframe
-                        className="w-full h-full"
-                        src={`https://www.youtube.com/embed/${suite.reelVideoId}?autoplay=0&mute=0`}
-                        title="Reels Mobile Preview"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
+                  <div className="relative aspect-[31/10] md:aspect-[3/1] rounded-3xl overflow-hidden border border-white/5 bg-brand-dark shadow-2xl">
+                    <img
+                      src={suite.coverUrl}
+                      alt="Facebook Page Cover Graphic"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  </div>
+                </div>
+
+                {/* Left box: Promo video player */}
+                <div className="lg:col-span-7 space-y-4">
+                  <div className="text-center md:text-start">
+                    <span className="text-[10px] font-mono text-brand-purple dark:text-brand-secondary font-bold uppercase tracking-widest block">
+                      {lang === 'ar' ? "فيديو ترويجي مخصص للفيسبوك" : "EXCLUSIVE FACEBOOK PROMO VIDEO"}
+                    </span>
+                    <h3 className="text-lg font-extrabold text-[#1A0B2E] dark:text-white mt-1">
+                      {lang === 'ar' ? "برومو تسويقي خاطف للأنظار" : "High-Energy Interactive Promo Trailer"}
+                    </h3>
+                  </div>
+
+                  <div className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border border-white/5">
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${suite.reelVideoId}?autoplay=0&mute=0`}
+                      title="Facebook Promo Video"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
                   </div>
                 </div>
 
                 {/* Right box: Design specs */}
-                <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+                <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
                   <div className="bg-black/5 border border-[#1A0B2E]/10 dark:bg-white/[0.01] dark:border-white/5 p-6 rounded-2xl space-y-6">
                     <h4 className="text-sm font-bold text-[#1A0B2E] dark:text-white flex items-center gap-2 border-b border-[#1A0B2E]/5 dark:border-white/5 pb-3">
                       <Award size={16} className="text-brand-secondary" />
-                      <span>{lang === 'ar' ? "مواصفات الفخامة البصرية" : "Identity & Animation Standards"}</span>
+                      <span>{lang === 'ar' ? "معايير تصميم صفحة الفيسبوك" : "Facebook Branding Metrics"}</span>
                     </h4>
 
                     {/* Specifications grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <span className="text-xs text-gray-500 font-mono block uppercase">{lang === 'ar' ? "الحركة والانتقالات:" : "Animation Mechanics:"}</span>
-                        <p className="text-xs md:text-sm text-[#1A0B2E]/90 dark:text-gray-300 font-semibold leading-relaxed">
+                    <div className="space-y-4 text-xs md:text-sm text-[#1A0B2E]/90 dark:text-gray-300">
+                      <div className="space-y-1">
+                        <span className="text-xs text-brand-secondary font-bold font-mono">1. RESPONSIVE DESIGN</span>
+                        <p className="font-light leading-relaxed">
                           {lang === 'ar' 
-                            ? "انتقالات ديناميكية بتوقيت مدروس (Easing Curves) يمنع الملل ويزيد الاحتفاظ." 
-                            : "Dynamic motion curve easing keeping early audience retention peaking above 70%."}
+                            ? "تصميم الغلاف يراعي الأبعاد الخاصة بالهواتف والحواسيب لضمان عدم اقتطاع أي نصوص." 
+                            : "Cover is optimized for mobile & desktop aspect ratios to prevent text cropping."}
                         </p>
                       </div>
 
-                      <div className="space-y-2">
-                        <span className="text-xs text-gray-500 font-mono block uppercase">{lang === 'ar' ? "تناسق النصوص:" : "Kinetic Typography:"}</span>
-                        <p className="text-xs md:text-sm text-[#1A0B2E]/90 dark:text-gray-300 font-semibold leading-relaxed">
+                      <div className="space-y-1">
+                        <span className="text-xs text-brand-secondary font-bold font-mono">2. HOOK TRAFFIC</span>
+                        <p className="font-light leading-relaxed">
                           {lang === 'ar' 
-                            ? "ترجمات ملونة تظهر كلمة بكلمة متناسقة صوتياً مع إيقاع سرد القصة." 
-                            : "Word-by-word active subtitles synced flawlessly with dynamic auditory SFX triggers."}
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <span className="text-xs text-gray-500 font-mono block uppercase">{lang === 'ar' ? "هندسة الصوت:" : "Auditory Branding:"}</span>
-                        <p className="text-xs md:text-sm text-[#1A0B2E]/90 dark:text-gray-300 font-semibold leading-relaxed">
-                          {lang === 'ar' 
-                            ? "تأثيرات صوتية غامرة (Swooshes, Whooshes, Risers) تعزز الخطاف البصري الأول." 
-                            : "Cinematic soundscapes and specialized transition cues creating distinct subconscious trust."}
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <span className="text-xs text-gray-500 font-mono block uppercase">{lang === 'ar' ? "نسبة تصحيح الألوان:" : "Cinematic LUTs & Grade:"}</span>
-                        <p className="text-xs md:text-sm text-[#1A0B2E]/90 dark:text-gray-300 font-semibold leading-relaxed">
-                          {lang === 'ar' 
-                            ? "تطبيق تدرجات الألوان الغامضة لضمان عمق دراماتيكي يجذب العين." 
-                            : "Dramatic cinematic contrast LUT application ensuring immediate widescreen visual hook."}
+                            ? "البرومو مصمم بأسلوب المونتاج السريع والخطاف لجذب ترافيك الفيسبوك وتحويلهم لعملاء." 
+                            : "The promotional video uses high-retention editing techniques to convert traffic."}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Pricing bundle recommendation */}
+                  {/* Recommendation action box */}
                   <div className="p-6 bg-[#FF2D7A]/5 border border-[#FF2D7A]/15 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="space-y-1 text-center sm:text-start">
-                      <span className="text-[10px] font-mono text-brand-secondary font-bold uppercase tracking-wider block">{lang === 'ar' ? "الباقة الشاملة الموصى بها" : "RECOMMENDED FOR SOCIAL CREATORS"}</span>
-                      <h4 className="text-sm font-extrabold text-[#1A0B2E] dark:text-white">{lang === 'ar' ? "باقة المونتاج والهوية المتكاملة" : "Full Premium Edit & Branding Package"}</h4>
+                      <span className="text-[10px] font-mono text-brand-secondary font-bold uppercase tracking-wider block">{lang === 'ar' ? "هوية فيسبوك متكاملة" : "COMPLETE FACEBOOK BRANDING"}</span>
+                      <h4 className="text-sm font-extrabold text-[#1A0B2E] dark:text-white">{lang === 'ar' ? "احصل على غلاف وبرومو حصري" : "Get Your Cover & Promo Today"}</h4>
                     </div>
                     <a
                       href="#contact"

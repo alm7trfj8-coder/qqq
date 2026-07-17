@@ -129,147 +129,63 @@ export default function Hero({ lang, isStarted }: HeroProps) {
   };
 
   /**
-   * REUSABLE SPECTACULAR 3D HOLOGRAPHIC PRODUCTION DECK
+   * LIGHTWEIGHT SHOWREEL INLINE PLAYER
    */
-  const HolographicDeck = () => (
-    <div className="relative w-full py-6 md:py-12" id="holo-deck-wrapper">
-      {/* Dynamic glow base behind */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-tr from-brand-purple/20 to-brand-secondary/20 blur-3xl animate-pulse pointer-events-none" />
+  const SimpleShowreel = () => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    return (
+      <div className="relative w-full py-4 flex justify-center" id="simple-showreel-wrapper">
+        <div className="relative w-full max-w-[480px] aspect-video rounded-2xl bg-black border border-white/10 shadow-[0_0_30px_rgba(255,45,122,0.15)] overflow-hidden group">
+          {isPlaying ? (
+            <iframe
+              src={`${showreelEmbed}&autoplay=1`}
+              title="Showreel"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="w-full h-full absolute inset-0"
+              id="showreel-iframe-inline"
+            />
+          ) : (
+            <div 
+              onClick={() => {
+                playAudio.playClick();
+                setIsPlaying(true);
+              }}
+              className="w-full h-full absolute inset-0 cursor-pointer flex items-center justify-center bg-cover bg-center"
+              style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600")' }}
+            >
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-black/60 group-hover:bg-black/55 transition-colors" />
+              
+              {/* Play button with click interaction */}
+              <div className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-r from-[#FF2D7A] to-[#FF8A00] flex items-center justify-center text-white shadow-xl group-hover:scale-110 transition-transform duration-300">
+                <Play size={24} className="fill-white translate-x-0.5" />
+              </div>
 
-      {/* 3D tilted card console */}
-      <motion.div
-        style={{ transformStyle: 'preserve-3d' }}
-        whileHover={{ rotateX: 8, rotateY: -8, scale: 1.02 }}
-        transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-        className="relative mx-auto w-full max-w-[440px] aspect-[4/3] sm:aspect-video md:aspect-[4/3] rounded-[32px] bg-[#140624]/60 border border-white/10 p-4 backdrop-blur-xl shadow-2xl flex flex-col justify-between overflow-visible group"
-        id="holo-deck-card"
-      >
-        {/* Top bar indicators */}
-        <div className="flex justify-between items-center z-10" id="holo-top-bar">
-          <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-full border border-white/5">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-            <span className="text-[10px] font-mono text-emerald-400 font-extrabold">LIVE CORE</span>
-          </div>
-          <span className="text-xs font-mono text-gray-400 bg-black/40 px-3 py-1 rounded border border-white/5">
-            {timecode}
-          </span>
+              {/* Text label */}
+              <div className="absolute bottom-4 left-4 right-4 text-center z-10">
+                <p className="text-[10px] sm:text-xs font-mono tracking-widest text-brand-secondary font-bold uppercase">
+                  {lang === 'ar' ? "اضغط لتشغيل شو ريل الاستوديو" : "CLICK TO PLAY STUDIO SHOWREEL"}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Direct Maximize Button (opens lightbox modal for cinematic theater style) */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenShowreel();
+            }}
+            className="absolute top-4 right-4 p-2 bg-black/60 backdrop-blur-md border border-white/15 rounded-lg text-white hover:bg-white/10 hover:text-[#FF2D7A] transition-all z-20 cursor-pointer flex items-center gap-1 text-[10px] font-mono"
+            title={lang === 'ar' ? "عرض بملء الشاشة" : "Maximize view"}
+          >
+            <span>{lang === 'ar' ? "تكبير" : "Maximize"}</span>
+          </button>
         </div>
-
-        {/* Central visual screen (The video edit preview monitor) */}
-        <div className="relative w-full h-[65%] rounded-2xl overflow-hidden bg-black/80 border border-white/5 shadow-inner flex items-center justify-center cursor-pointer group/screen" onClick={handleOpenShowreel}>
-          {/* Editor background picture */}
-          <img 
-            src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600" 
-            alt="Timeline Monitor" 
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover brightness-[0.35] group-hover/screen:scale-105 transition-transform duration-500" 
-          />
-
-          {/* Grid lines overlay to look like drafting software */}
-          <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
-
-          {/* Glowing central play orb */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative w-16 h-16 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-[#FF2D7A]/20 animate-ping" />
-              <div className="absolute inset-0 rounded-full bg-brand-secondary/30 animate-pulse" />
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenShowreel();
-                }}
-                onMouseEnter={() => playAudio.playHover()}
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-[#FF2D7A] to-[#FF8A00] text-white flex items-center justify-center shadow-lg group-hover/screen:scale-110 transition-transform duration-200"
-              >
-                <Play size={20} className="fill-white translate-x-0.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Running Audio Waveforms (bouncing neon lines) inside monitor screen */}
-          <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between pointer-events-none bg-black/20 p-2 rounded-lg backdrop-blur-[2px]">
-            <span className="text-[8px] font-mono text-brand-secondary font-bold">AUDIO CH 1/2</span>
-            <div className="flex items-end gap-0.5 h-5">
-              {[...Array(14)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ height: [3, 16 - Math.abs(7 - i) * 1.5 + Math.random() * 4, 3] }}
-                  transition={{
-                    duration: 0.6 + (i % 3) * 0.15,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="w-[2px] bg-[#FF2D7A] rounded-full"
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Floating 3D Adjustments Glass Card (Tilted offset, floats out of container) */}
-        <motion.div
-          style={{ transform: 'translateZ(30px)' }}
-          onMouseEnter={() => playAudio.playHover()}
-          className="absolute -top-10 -right-6 md:-top-12 md:-right-8 w-36 p-3 bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl shadow-xl space-y-2 pointer-events-auto hidden sm:block"
-        >
-          <div className="flex items-center gap-1 text-[9px] font-mono text-[#FF2D7A] font-extrabold">
-            <Sliders size={10} />
-            <span>ADJUSTMENTS</span>
-          </div>
-          <div className="space-y-1.5">
-            <div>
-              <div className="flex justify-between text-[7px] font-mono text-gray-400">
-                <span>Color Grade</span>
-                <span className="text-[#FF8A00]">LUT v4</span>
-              </div>
-              <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-0.5">
-                <div className="w-[85%] h-full bg-[#FF8A00] rounded-full" />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-[7px] font-mono text-gray-400">
-                <span>VFX Render</span>
-                <span className="text-brand-secondary">100%</span>
-              </div>
-              <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-0.5">
-                <div className="w-full h-full bg-brand-secondary rounded-full" />
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Floating 3D Metric Badge (Floats out of left container) */}
-        <motion.div
-          style={{ transform: 'translateZ(40px)' }}
-          onMouseEnter={() => playAudio.playHover()}
-          className="absolute -bottom-6 -left-4 md:-bottom-8 md:-left-6 p-2.5 bg-[#FF2D7A]/10 backdrop-blur-md border border-[#FF2D7A]/20 rounded-xl shadow-lg flex items-center gap-2 pointer-events-auto"
-        >
-          <div className="w-2 h-2 rounded-full bg-[#FF2D7A] animate-pulse" />
-          <div className="font-sans text-left">
-            <p className="text-[7px] font-mono tracking-widest text-[#FF2D7A] font-extrabold leading-none">RETENTION ENGAGEMENT</p>
-            <p className="text-xs font-display font-black text-white mt-0.5 leading-none">+180% CTR</p>
-          </div>
-        </motion.div>
-
-        {/* Floating 3D Cyber-hardware Icon (Back top left) */}
-        <motion.div
-          style={{ transform: 'translateZ(-20px)' }}
-          className="absolute top-12 -left-8 w-10 h-10 rounded-full bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-secondary pointer-events-none hidden sm:flex"
-        >
-          <Cpu size={16} className="animate-spin" style={{ animationDuration: '8s' }} />
-        </motion.div>
-
-        {/* Interactive Audio prompt */}
-        <div className="flex justify-between items-center text-[10px] font-mono text-gray-500 z-10" id="holo-bottom-bar">
-          <span className="flex items-center gap-1">
-            <Volume2 size={12} className="text-brand-secondary" />
-            <span>{lang === 'ar' ? "تفاعل صوتي نشط" : "Dynamic Sound Interaction"}</span>
-          </span>
-          <span>4K COMPOSITE</span>
-        </div>
-      </motion.div>
-    </div>
-  );
+      </div>
+    );
+  };
 
   return (
     <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 overflow-hidden bg-transparent min-h-screen flex flex-col justify-center" id="hero-section">
@@ -299,9 +215,9 @@ export default function Hero({ lang, isStarted }: HeroProps) {
             <h1
               className={`${
                 lang === 'ar'
-                  ? 'text-3xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-slogan-ar'
-                  : 'text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-slogan-en'
-              } font-black tracking-tight text-white leading-[1.25] lg:leading-[1.15] flex flex-wrap justify-center lg:justify-start gap-x-4 gap-y-2 lg:gap-y-3 overflow-visible`}
+                  ? 'text-5xl sm:text-6xl md:text-6xl lg:text-6xl xl:text-7xl font-slogan-ar'
+                  : 'text-4xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-slogan-en'
+              } font-black tracking-tight text-white leading-[1.25] lg:leading-[1.15] flex flex-col lg:flex-row lg:flex-wrap items-center lg:items-start justify-center lg:justify-start gap-y-3 sm:gap-x-4 sm:gap-y-3 overflow-visible`}
               id="hero-main-title"
             >
               {sloganSegments.map((segment, idx) => {
@@ -320,9 +236,9 @@ export default function Hero({ lang, isStarted }: HeroProps) {
               })}
             </h1>
 
-            {/* MOBILE ONLY: Stunning 3D Holographic Production Deck placed right here! */}
+            {/* MOBILE ONLY: Simple showreel inline video frame */}
             <div className="block lg:hidden" id="hero-mobile-3d-deck">
-              <HolographicDeck />
+              <SimpleShowreel />
             </div>
 
             {/* Studio Description */}
@@ -434,14 +350,14 @@ export default function Hero({ lang, isStarted }: HeroProps) {
             </motion.div>
           </div>
 
-          {/* DESKTOP ONLY: 3D Holographic Deck (5 columns) */}
+          {/* DESKTOP ONLY: Optimized Showreel (5 columns) */}
           <div className="hidden lg:block lg:col-span-5 relative" id="hero-desktop-3d-deck">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.45 }}
             >
-              <HolographicDeck />
+              <SimpleShowreel />
             </motion.div>
           </div>
 
