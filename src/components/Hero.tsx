@@ -10,9 +10,10 @@ import { playAudio } from '../utils/audio';
 
 interface HeroProps {
   lang: Language;
+  isStarted: boolean;
 }
 
-export default function Hero({ lang }: HeroProps) {
+export default function Hero({ lang, isStarted }: HeroProps) {
   const [showModal, setShowModal] = useState(false);
   const timecode = "01:24:42:09";
 
@@ -22,6 +23,8 @@ export default function Hero({ lang }: HeroProps) {
     : ["Cinematic Vision.", "Absolute", "Command."];
 
   useEffect(() => {
+    if (!isStarted) return;
+
     // Play electronic swipe sounds synchronized perfectly with each line's entering transition
     const timer1 = setTimeout(() => {
       playAudio.playSloganSwipe();
@@ -40,7 +43,7 @@ export default function Hero({ lang }: HeroProps) {
       clearTimeout(timer2);
       clearTimeout(timer3);
     };
-  }, [lang]);
+  }, [lang, isStarted]);
 
   const getDirectionVariant = (index: number) => {
     switch(index) {
@@ -308,7 +311,7 @@ export default function Hero({ lang }: HeroProps) {
                     key={idx}
                     variants={variant}
                     initial="hidden"
-                    animate="visible"
+                    animate={isStarted ? "visible" : "hidden"}
                     className="inline-block origin-center whitespace-normal sm:whitespace-nowrap text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
                   >
                     {segment}

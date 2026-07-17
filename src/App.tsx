@@ -19,6 +19,19 @@ import { playAudio } from './utils/audio';
 export default function App() {
   const [lang, setLang] = useState<Language>('ar');
   const [isMobile, setIsMobile] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
+
+  // Scroll lock for welcome overlay
+  useEffect(() => {
+    if (!isStarted) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isStarted]);
 
   // Motion values for magnetic fluid mouse tracking
   const mouseX = useMotionValue(0);
@@ -238,7 +251,7 @@ export default function App() {
       {/* Main content body */}
       <main id="main-content-flow" className="relative z-10">
         {/* Hero Section */}
-        <Hero lang={lang} />
+        <Hero lang={lang} isStarted={isStarted} />
 
         {/* Brand Scrolling Marquee */}
         <Marquee lang={lang} />
@@ -287,6 +300,104 @@ export default function App() {
           >
             <ArrowUp size={20} className="animate-bounce" style={{ animationDuration: '2s' }} />
           </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Welcome Splash Overlay */}
+      <AnimatePresence>
+        {!isStarted && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -50, filter: 'blur(20px)' }}
+            transition={{ duration: 0.8, ease: 'easeInOut' }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#07020d] text-white select-none px-4"
+            id="welcome-splash-overlay"
+          >
+            {/* Top Language Switcher */}
+            <div className={`absolute top-6 ${lang === 'ar' ? 'left-6' : 'right-6'} z-[110]`}>
+              <button
+                onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
+                className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-semibold hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                {lang === 'ar' ? 'English' : 'العربية'}
+              </button>
+            </div>
+
+            {/* Ambient glows inside overlay */}
+            <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-[#FF2D7A]/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
+            <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-brand-secondary/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
+            
+            {/* Cinematic grid overlay */}
+            <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
+            
+            <div className="max-w-md w-full text-center space-y-8 relative z-10 flex flex-col items-center">
+              {/* Animated Studio Logo/Icon */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2, type: 'spring' }}
+                className="relative w-20 h-20 rounded-3xl bg-gradient-to-tr from-[#FF2D7A] to-[#FF8A00] flex items-center justify-center p-0.5 shadow-[0_0_50px_rgba(255,45,122,0.3)]"
+              >
+                <div className="w-full h-full rounded-[22px] bg-[#0c0517] flex items-center justify-center">
+                  <span className="font-display font-black text-3xl tracking-tighter bg-gradient-to-r from-[#FF2D7A] to-[#FF8A00] bg-clip-text text-transparent">P</span>
+                </div>
+              </motion.div>
+
+              {/* Title & Slogans */}
+              <div className="space-y-3">
+                <motion.h1
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.35, duration: 0.6 }}
+                  className="text-4xl sm:text-5xl font-display font-black tracking-widest text-white"
+                >
+                  PIXELZ
+                </motion.h1>
+                <motion.p
+                  initial={{ y: 15, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="text-gray-400 text-sm sm:text-base font-medium max-w-xs mx-auto leading-relaxed"
+                >
+                  {lang === 'ar' 
+                    ? "ستوديو المونتاج والهوية السينمائية الفاخرة" 
+                    : "Elite Cinematic Video & Visual Identity Studio"}
+                </motion.p>
+              </div>
+
+              {/* Interactive Start Button */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.65, duration: 0.6 }}
+                className="pt-4"
+              >
+                <button
+                  onClick={() => {
+                    playAudio.playClick();
+                    setIsStarted(true);
+                  }}
+                  className="relative group px-12 py-5 rounded-full bg-gradient-to-r from-[#FF2D7A] to-[#FF8A00] text-white font-black text-lg tracking-wider shadow-[0_0_30px_rgba(255,45,122,0.4)] hover:shadow-[0_0_50px_rgba(255,45,122,0.6)] hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 cursor-pointer flex items-center gap-3 overflow-hidden"
+                >
+                  <span className="absolute inset-0 w-full h-full bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 animate-pulse" />
+                  <span className="relative z-10 flex items-center gap-2">
+                    {lang === 'ar' ? "ابدأ التجربة" : "ENTER EXPERIENCE"}
+                  </span>
+                </button>
+              </motion.div>
+
+              {/* Headphones/sound hint */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                transition={{ delay: 0.8 }}
+                className="text-[10px] font-mono tracking-widest text-gray-500 uppercase flex items-center gap-1.5"
+              >
+                <span>🎧</span>
+                <span>{lang === 'ar' ? "يرجى تشغيل الصوت للحصول على أفضل تجربة سينمائية" : "Turn up sound for the full cinematic experience"}</span>
+              </motion.p>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
