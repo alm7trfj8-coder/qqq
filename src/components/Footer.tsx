@@ -2,6 +2,7 @@ import { siteConfig } from '../config/site';
 import { Language } from '../types';
 import { Instagram, Youtube, Tv, Globe, Award, Heart, MessageCircle } from 'lucide-react';
 import { motion } from 'motion/react';
+import Logo from './Logo';
 
 interface FooterProps {
   lang: Language;
@@ -48,20 +49,8 @@ export default function Footer({ lang }: FooterProps) {
           
           {/* Column A: Logo and Tagline */}
           <div className="md:col-span-5 space-y-6" id="footer-col-logo">
-            <a href="#" className="flex items-center gap-3" id="footer-logo-link">
-              <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="footerLogoGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#7B1FA2" />
-                    <stop offset="50%" stopColor="#FF2D7A" />
-                    <stop offset="100%" stopColor="#FF8A00" />
-                  </linearGradient>
-                </defs>
-                <path 
-                  d="M25 15 H65 C82 15 85 28 85 45 C85 62 76 68 60 68 H42 L42 85 L25 85 Z M42 32 H55 C65 32 68 38 68 46 C68 54 63 58 52 58 H42 Z" 
-                  fill="url(#footerLogoGrad)" 
-                />
-              </svg>
+            <a href="#" className="flex items-center gap-3 animate-pulse-slow" id="footer-logo-link">
+              <Logo size={42} className="transform hover:scale-110 hover:rotate-3 transition-transform duration-300" />
               <div className="flex flex-col">
                 <div className="flex items-center font-display font-black text-lg tracking-wider leading-none" dir="ltr">
                   <span className="text-[#1A0B2E] dark:text-white">PIXEL</span>

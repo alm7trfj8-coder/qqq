@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import { Language } from './types';
 import { ArrowUp } from 'lucide-react';
 import { playAudio } from './utils/audio';
+import Logo from './components/Logo';
 
 export default function App() {
   const [lang, setLang] = useState<Language>('ar');
@@ -328,10 +329,10 @@ export default function App() {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.2, type: 'spring' }}
-                className="relative w-20 h-20 rounded-3xl bg-gradient-to-tr from-[#FF2D7A] to-[#FF8A00] flex items-center justify-center p-0.5 shadow-[0_0_50px_rgba(255,45,122,0.3)]"
+                className="relative w-24 h-24 rounded-full bg-gradient-to-tr from-[#FF2D7A] to-[#FF8A00] flex items-center justify-center p-0.5 shadow-[0_0_50px_rgba(255,45,122,0.45)]"
               >
-                <div className="w-full h-full rounded-[22px] bg-[#0c0517] flex items-center justify-center">
-                  <span className="font-display font-black text-3xl tracking-tighter bg-gradient-to-r from-[#FF2D7A] to-[#FF8A00] bg-clip-text text-transparent">P</span>
+                <div className="w-full h-full rounded-full bg-[#0c0517]/95 flex items-center justify-center">
+                  <Logo size={68} className="animate-pulse-slow" />
                 </div>
               </motion.div>
 

@@ -4,6 +4,7 @@ import { Menu, X, Globe, MessageCircle, Send } from 'lucide-react';
 import { siteConfig } from '../config/site';
 import { Language } from '../types';
 import { playAudio } from '../utils/audio';
+import Logo from './Logo';
 
 interface NavbarProps {
   lang: Language;
@@ -88,27 +89,7 @@ export default function Navbar({ lang, setLang }: NavbarProps) {
           {/* Recreated Vector Logo "PIXELZ" */}
           <div className="flex-shrink-0">
             <a href="#" onClick={() => playAudio.playClick()} className="flex items-center gap-3" id="nav-logo-link">
-              <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform hover:scale-110 hover:rotate-3 transition-transform duration-300 cursor-pointer">
-                <defs>
-                  <linearGradient id="logoGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#7B1FA2" />
-                    <stop offset="50%" stopColor="#FF2D7A" />
-                    <stop offset="100%" stopColor="#FF8A00" />
-                  </linearGradient>
-                </defs>
-                {/* Stylized geometric letter P */}
-                <path 
-                  d="M25 15 H65 C82 15 85 28 85 45 C85 62 76 68 60 68 H42 L42 85 L25 85 Z M42 32 H55 C65 32 68 38 68 46 C68 54 63 58 52 58 H42 Z" 
-                  fill="url(#logoGrad)" 
-                  fillRule="evenodd"
-                />
-                {/* Embedded Video Play Triangle - Custom programmatically sized */}
-                <polygon 
-                  points="46,38 60,46 46,54" 
-                  fill="#1A0B2E" 
-                  className="transition-colors duration-500"
-                />
-              </svg>
+              <Logo size={38} className="transform hover:scale-110 hover:rotate-3 transition-transform duration-300 cursor-pointer" />
 
               <div className="flex flex-col">
                 <div className="flex items-center font-display font-black text-xl tracking-wider leading-none" dir="ltr">
