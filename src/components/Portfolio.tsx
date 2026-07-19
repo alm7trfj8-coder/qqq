@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Play, ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Smartphone, Flame, Maximize2, X, Film, Youtube } from 'lucide-react';
 import { Language } from '../types';
 import { playAudio } from '../utils/audio';
+import { useSiteConfig } from '../context/SiteConfigContext';
 
 interface PortfolioProps {
   lang: Language;
@@ -105,6 +106,24 @@ const youtubeList = [
 ];
 
 export default function Portfolio({ lang }: PortfolioProps) {
+  const { siteData } = useSiteConfig();
+
+  if (!siteData.showPortfolioSection) return null;
+
+  // Dynamically filter active items from configuration state
+  const reelsList = siteData.portfolioProjects
+    .filter(p => p.category === 'reels' && p.visible !== false)
+    .map(p => ({
+      ...p,
+      videoId: p.mediaUrl
+    }));
+  const youtubeList = siteData.portfolioProjects
+    .filter(p => p.category === 'youtube' && p.visible !== false)
+    .map(p => ({
+      ...p,
+      videoId: p.mediaUrl
+    }));
+
   const [activeTab, setActiveTab] = useState<'reels' | 'youtube'>('reels');
   
   // Reels mobile index tracker
@@ -226,59 +245,67 @@ export default function Portfolio({ lang }: PortfolioProps) {
               transition={{ duration: 0.5 }}
               className="w-full"
             >
-              {/* DESKTOP VIEW: 3 Phones Side-by-Side */}
-              <div className="hidden lg:grid lg:grid-cols-3 gap-8 justify-center items-center max-w-5xl mx-auto">
-                {reelsList.map((reel) => (
-                  <PhoneFrame 
-                    key={reel.id} 
-                    videoId={reel.videoId} 
-                    title={reel.title[lang]} 
-                    lang={lang}
-                    onMaximize={() => setLightboxVideoId(reel.videoId)}
-                  />
-                ))}
-              </div>
+              {reelsList.length > 0 ? (
+                <>
+                  {/* DESKTOP VIEW: 3 Phones Side-by-Side */}
+                  <div className="hidden lg:grid lg:grid-cols-3 gap-8 justify-center items-center max-w-5xl mx-auto">
+                    {reelsList.map((reel) => (
+                      <PhoneFrame 
+                        key={reel.id} 
+                        videoId={reel.videoId} 
+                        title={reel.title[lang]} 
+                        lang={lang}
+                        onMaximize={() => setLightboxVideoId(reel.videoId)}
+                      />
+                    ))}
+                  </div>
 
-              {/* MOBILE VIEW: 1 Phone with Left/Right Arrows */}
-              <div className="lg:hidden flex items-center justify-between gap-4 max-w-[340px] mx-auto relative px-2">
-                <button
-                  onClick={handlePrevReel}
-                  className="p-3 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer select-none shrink-0"
-                  aria-label="Previous Reel"
-                >
-                  <ArrowLeft size={20} className="rtl:rotate-180" />
-                </button>
+                  {/* MOBILE VIEW: 1 Phone with Left/Right Arrows */}
+                  <div className="lg:hidden flex items-center justify-between gap-4 max-w-[340px] mx-auto relative px-2">
+                    <button
+                      onClick={handlePrevReel}
+                      className="p-3 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer select-none shrink-0"
+                      aria-label="Previous Reel"
+                    >
+                      <ArrowLeft size={20} className="rtl:rotate-180" />
+                    </button>
 
-                <div className="flex-1 flex justify-center">
-                  <PhoneFrame 
-                    key={reelsList[activeReelIndex].id}
-                    videoId={reelsList[activeReelIndex].videoId}
-                    title={reelsList[activeReelIndex].title[lang]}
-                    lang={lang}
-                    onMaximize={() => setLightboxVideoId(reelsList[activeReelIndex].videoId)}
-                  />
+                    <div className="flex-1 flex justify-center">
+                      <PhoneFrame 
+                        key={reelsList[activeReelIndex]?.id || 'fallback-reel'}
+                        videoId={reelsList[activeReelIndex]?.videoId || ''}
+                        title={reelsList[activeReelIndex]?.title?.[lang] || ''}
+                        lang={lang}
+                        onMaximize={() => setLightboxVideoId(reelsList[activeReelIndex]?.videoId || '')}
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleNextReel}
+                      className="p-3 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer select-none shrink-0"
+                      aria-label="Next Reel"
+                    >
+                      <ArrowRight size={20} className="rtl:rotate-180" />
+                    </button>
+                  </div>
+
+                  {/* Mobile pagination indicators */}
+                  <div className="lg:hidden flex justify-center gap-1.5 mt-6">
+                    {reelsList.map((_, idx) => (
+                      <div 
+                        key={idx} 
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          activeReelIndex === idx ? 'bg-brand-secondary w-4' : 'bg-white/20'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-12 text-gray-500 text-xs font-mono">
+                  {lang === 'ar' ? 'لا توجد فيديوهات ريلز معروضة حالياً.' : 'No reels currently showcased.'}
                 </div>
-
-                <button
-                  onClick={handleNextReel}
-                  className="p-3 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer select-none shrink-0"
-                  aria-label="Next Reel"
-                >
-                  <ArrowRight size={20} className="rtl:rotate-180" />
-                </button>
-              </div>
-
-              {/* Mobile pagination indicators */}
-              <div className="lg:hidden flex justify-center gap-1.5 mt-6">
-                {reelsList.map((_, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      activeReelIndex === idx ? 'bg-brand-secondary w-4' : 'bg-white/20'
-                    }`}
-                  />
-                ))}
-              </div>
+              )}
             </motion.div>
           ) : (
             <motion.div
@@ -289,65 +316,73 @@ export default function Portfolio({ lang }: PortfolioProps) {
               transition={{ duration: 0.5 }}
               className="w-full"
             >
-              {/* DESKTOP VIEW: 2x2 Video Grid */}
-              <div className="hidden lg:grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                {youtubeList.map((video) => (
-                  <YouTubeCard 
-                    key={video.id}
-                    videoId={video.videoId}
-                    title={video.title[lang]}
-                    desc={video.desc[lang]}
-                    result={video.result[lang]}
-                    lang={lang}
-                    onMaximize={() => setLightboxVideoId(video.videoId)}
-                  />
-                ))}
-              </div>
+              {youtubeList.length > 0 ? (
+                <>
+                  {/* DESKTOP VIEW: 2x2 Video Grid */}
+                  <div className="hidden lg:grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    {youtubeList.map((video) => (
+                      <YouTubeCard 
+                        key={video.id}
+                        videoId={video.videoId}
+                        title={video.title[lang]}
+                        desc={video.desc[lang]}
+                        result={video.result[lang]}
+                        lang={lang}
+                        onMaximize={() => setLightboxVideoId(video.videoId)}
+                      />
+                    ))}
+                  </div>
 
-              {/* MOBILE VIEW: Vertical flipping with Up/Down Arrows */}
-              <div className="lg:hidden flex flex-col items-center gap-4 max-w-[420px] mx-auto relative px-2">
-                {/* Up Arrow */}
-                <button
-                  onClick={handlePrevYT}
-                  className="p-2.5 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer select-none"
-                  aria-label="Previous Video"
-                >
-                  <ArrowUp size={18} />
-                </button>
+                  {/* MOBILE VIEW: Vertical flipping with Up/Down Arrows */}
+                  <div className="lg:hidden flex flex-col items-center gap-4 max-w-[420px] mx-auto relative px-2">
+                    {/* Up Arrow */}
+                    <button
+                      onClick={handlePrevYT}
+                      className="p-2.5 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer select-none"
+                      aria-label="Previous Video"
+                    >
+                      <ArrowUp size={18} />
+                    </button>
 
-                <div className="w-full">
-                  <YouTubeCard 
-                    key={youtubeList[activeYTIndex].id}
-                    videoId={youtubeList[activeYTIndex].videoId}
-                    title={youtubeList[activeYTIndex].title[lang]}
-                    desc={youtubeList[activeYTIndex].desc[lang]}
-                    result={youtubeList[activeYTIndex].result[lang]}
-                    lang={lang}
-                    onMaximize={() => setLightboxVideoId(youtubeList[activeYTIndex].videoId)}
-                  />
+                    <div className="w-full">
+                      <YouTubeCard 
+                        key={youtubeList[activeYTIndex]?.id || 'fallback-yt'}
+                        videoId={youtubeList[activeYTIndex]?.videoId || ''}
+                        title={youtubeList[activeYTIndex]?.title?.[lang] || ''}
+                        desc={youtubeList[activeYTIndex]?.desc?.[lang] || ''}
+                        result={youtubeList[activeYTIndex]?.result?.[lang] || ''}
+                        lang={lang}
+                        onMaximize={() => setLightboxVideoId(youtubeList[activeYTIndex]?.videoId || '')}
+                      />
+                    </div>
+
+                    {/* Down Arrow */}
+                    <button
+                      onClick={handleNextYT}
+                      className="p-2.5 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer select-none"
+                      aria-label="Next Video"
+                    >
+                      <ArrowDown size={18} />
+                    </button>
+
+                    {/* Mobile indicators */}
+                    <div className="flex justify-center gap-1.5 mt-2">
+                      {youtubeList.map((_, idx) => (
+                        <div 
+                          key={idx} 
+                          className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                            activeYTIndex === idx ? 'bg-brand-secondary w-3' : 'bg-white/20'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-12 text-gray-500 text-xs font-mono">
+                  {lang === 'ar' ? 'لا توجد فيديوهات يوتيوب معروضة حالياً.' : 'No YouTube videos currently showcased.'}
                 </div>
-
-                {/* Down Arrow */}
-                <button
-                  onClick={handleNextYT}
-                  className="p-2.5 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer select-none"
-                  aria-label="Next Video"
-                >
-                  <ArrowDown size={18} />
-                </button>
-
-                {/* Mobile indicators */}
-                <div className="flex justify-center gap-1.5 mt-2">
-                  {youtubeList.map((_, idx) => (
-                    <div 
-                      key={idx} 
-                      className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                        activeYTIndex === idx ? 'bg-brand-secondary w-3' : 'bg-white/20'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

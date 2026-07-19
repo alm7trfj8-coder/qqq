@@ -1,28 +1,25 @@
-import { siteConfig } from '../config/site';
 import { Language } from '../types';
-import { Instagram, Youtube, Tv, Globe, Award, Heart, MessageCircle } from 'lucide-react';
+import { Instagram, Youtube, Tv, Globe, Award, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 import Logo from './Logo';
+import { useSiteConfig } from '../context/SiteConfigContext';
 
 interface FooterProps {
   lang: Language;
+  onAdminTrigger: () => void;
 }
 
-export default function Footer({ lang }: FooterProps) {
+export default function Footer({ lang, onAdminTrigger }: FooterProps) {
+  const { siteData } = useSiteConfig();
   const currentYear = new Date().getFullYear();
-
-  // Clean brand name fallback
-  const cleanBrandName = siteConfig.brandName === "{{BRAND_NAME}}"
-    ? (lang === 'ar' ? 'بيكسلز' : 'PIXELZ')
-    : siteConfig.brandName;
 
   // Social link icons map
   const socialIcons = [
-    { key: 'youtube', icon: Youtube, label: 'YouTube', color: '#FF0000' },
-    { key: 'instagram', icon: Instagram, label: 'Instagram', color: '#E1306C' },
-    { key: 'tiktok', icon: Tv, label: 'TikTok', color: '#00F2FE' },
-    { key: 'behance', icon: Award, label: 'Behance', color: '#0057ff' },
-    { key: 'facebook', icon: Globe, label: 'Facebook', color: '#1877F2' },
+    { key: 'youtube', icon: Youtube, label: 'YouTube' },
+    { key: 'instagram', icon: Instagram, label: 'Instagram' },
+    { key: 'tiktok', icon: Tv, label: 'TikTok' },
+    { key: 'behance', icon: Award, label: 'Behance' },
+    { key: 'facebook', icon: Globe, label: 'Facebook' },
   ];
 
   // Footer Navigation columns
@@ -35,10 +32,7 @@ export default function Footer({ lang }: FooterProps) {
     { href: '#contact', label: { ar: 'طلب استشارة', en: 'Initiate Brief' } },
   ];
 
-  // Copyright text mapping
-  const copyrightText = siteConfig.copy.footer.copyright[lang]
-    .replace('{year}', currentYear.toString())
-    .replace('{brandName}', cleanBrandName);
+  const brandNameWord = lang === 'ar' ? 'بيكسلزات' : 'PIXELZAT';
 
   return (
     <footer className="bg-transparent border-t border-[#1A0B2E]/10 dark:border-white/5 pt-16 pb-8 text-[#1A0B2E]/70 dark:text-gray-500 text-sm" id="footer-section">
@@ -62,7 +56,9 @@ export default function Footer({ lang }: FooterProps) {
               </div>
             </a>
             <p className="text-[#1A0B2E]/80 dark:text-gray-400 font-light leading-relaxed text-sm sm:text-base max-w-sm">
-              {siteConfig.copy.footer.tagline[lang]}
+              {lang === 'ar' 
+                ? "نحن لا نصنع فيديوهات؛ نحن نبني تحفاً سينمائية تدوم وتؤثر وتصنع هوية لا تنسى."
+                : "We don't just edit; we forge cinematic assets that endure, inspire, and define brands."}
             </p>
           </div>
 
@@ -95,8 +91,12 @@ export default function Footer({ lang }: FooterProps) {
             <div className="flex flex-wrap gap-2.5">
               {socialIcons.map((soc) => {
                 const IconComponent = soc.icon;
-                const linkVal = siteConfig.socials[soc.key as keyof typeof siteConfig.socials];
-                const cleanLink = linkVal === `{{${soc.key.toUpperCase()}}}` ? '#' : linkVal;
+                const configItem = siteData.socialLinks[soc.key as keyof typeof siteData.socialLinks];
+                
+                // If the social handle is not enabled in admin panel, do not render it!
+                if (configItem && configItem.visible === false) return null;
+
+                const cleanLink = configItem?.url || '#';
 
                 return (
                   <motion.a
@@ -127,7 +127,33 @@ export default function Footer({ lang }: FooterProps) {
 
         {/* Bottom Credits bar */}
         <div className="pt-8 border-t border-[#1A0B2E]/10 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#1A0B2E]/60 dark:text-gray-600" id="footer-bottom-bar">
-          <p id="copyright-text-label" className="font-medium text-center md:text-start">{copyrightText}</p>
+          <p id="copyright-text-label" className="font-medium text-center md:text-start">
+            {lang === 'ar' ? (
+              <>
+                جميع الحقوق محفوظة © {currentYear}{' '}
+                <span 
+                  onClick={onAdminTrigger} 
+                  className="cursor-pointer hover:text-[#FF2D7A] transition-colors font-bold select-none"
+                  title="Pixelz Studio Controls"
+                >
+                  {brandNameWord}
+                </span>
+                . صُنع لصناع المحتوى والرواد الباحثين عن جودة السينما.
+              </>
+            ) : (
+              <>
+                All Rights Reserved © {currentYear}{' '}
+                <span 
+                  onClick={onAdminTrigger} 
+                  className="cursor-pointer hover:text-[#FF2D7A] transition-colors font-bold select-none"
+                  title="Pixelz Studio Controls"
+                >
+                  {brandNameWord}
+                </span>
+                . Crafted for creators & pioneers seeking cinema-grade excellence.
+              </>
+            )}
+          </p>
           
           <div className="flex items-center gap-1.5" id="designer-credit">
             <span>Built for creators who deliver cinema-quality work</span>

@@ -1,25 +1,31 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, ArrowRight, ArrowLeft } from 'lucide-react';
-import { siteConfig } from '../config/site';
 import { Language } from '../types';
+import { useSiteConfig } from '../context/SiteConfigContext';
+import { siteConfig } from '../config/site';
 
 interface TestimonialsProps {
   lang: Language;
 }
 
 export default function Testimonials({ lang }: TestimonialsProps) {
+  const { siteData } = useSiteConfig();
   const [activeIndex, setActiveIndex] = useState(0);
+
+  if (!siteData.showTestimonialsSection) return null;
 
   const title = siteConfig.copy.testimonials.title[lang];
   const subtitle = siteConfig.copy.testimonials.subtitle[lang];
-  const items = siteConfig.copy.testimonials.items;
+  const items = siteData.testimonialsList.filter(item => item.visible !== false);
 
   const handleNext = () => {
+    if (items.length === 0) return;
     setActiveIndex((prev) => (prev + 1) % items.length);
   };
 
   const handlePrev = () => {
+    if (items.length === 0) return;
     setActiveIndex((prev) => (prev - 1 + items.length) % items.length);
   };
 
@@ -52,88 +58,96 @@ export default function Testimonials({ lang }: TestimonialsProps) {
 
         {/* Carousel Container */}
         <div className="max-w-4xl mx-auto relative px-4 md:px-12" id="testimonials-carousel">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              transition={{ duration: 0.4 }}
-              className="bg-black/5 border border-[#1A0B2E]/10 dark:bg-white/[0.01] dark:border-white/5 rounded-3xl p-8 sm:p-12 relative flex flex-col items-center text-center space-y-6 md:space-y-8 backdrop-blur-sm"
-              id={`testimonial-slide-${activeIndex}`}
-            >
-              {/* Star ratings */}
-              <div className="flex gap-1" id={`stars-rating-${activeIndex}`}>
-                {Array.from({ length: items[activeIndex]?.rating || 5 }).map((_, i) => (
-                  <Star key={i} size={16} className="fill-brand-accent text-brand-accent" />
-                ))}
-              </div>
+          {items.length > 0 ? (
+            <>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-black/5 border border-[#1A0B2E]/10 dark:bg-white/[0.01] dark:border-white/5 rounded-3xl p-8 sm:p-12 relative flex flex-col items-center text-center space-y-6 md:space-y-8 backdrop-blur-sm"
+                  id={`testimonial-slide-${activeIndex}`}
+                >
+                  {/* Star ratings */}
+                  <div className="flex gap-1" id={`stars-rating-${activeIndex}`}>
+                    {Array.from({ length: items[activeIndex]?.rating || 5 }).map((_, i) => (
+                      <Star key={i} size={16} className="fill-brand-accent text-brand-accent" />
+                    ))}
+                  </div>
 
-              {/* Review Text */}
-              <blockquote className="text-lg sm:text-xl text-[#1A0B2E] dark:text-gray-200 leading-relaxed font-light italic max-w-2xl">
-                " {items[activeIndex]?.content[lang]} "
-              </blockquote>
+                  {/* Review Text */}
+                  <blockquote className="text-lg sm:text-xl text-[#1A0B2E] dark:text-gray-200 leading-relaxed font-light italic max-w-2xl">
+                    " {items[activeIndex]?.content?.[lang] || ''} "
+                  </blockquote>
 
-              {/* Avatar and Credentials */}
-              <div className="flex flex-col items-center space-y-2">
-                <img
-                  src={items[activeIndex]?.avatar}
-                  alt={items[activeIndex]?.name[lang]}
-                  referrerPolicy="no-referrer"
-                  className="w-14 h-14 rounded-full object-cover border-2 border-brand-purple dark:border-brand-secondary shadow-md"
-                />
-                <div>
-                  <h4 className="font-display font-extrabold text-[#1A0B2E] dark:text-white">
-                    {items[activeIndex]?.name[lang]}
-                  </h4>
-                  <p className="text-xs text-[#1A0B2E]/70 dark:text-gray-500 font-semibold">
-                    {items[activeIndex]?.role[lang]}
-                  </p>
-                  {items[activeIndex]?.channelName && (
-                    <span className="inline-block text-[10px] font-mono px-2 py-0.5 bg-black/5 border border-[#1A0B2E]/10 text-brand-purple dark:bg-white/5 dark:border-white/5 dark:text-brand-secondary rounded mt-1.5 font-bold">
-                      {items[activeIndex]?.channelName}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+                  {/* Avatar and Credentials */}
+                  <div className="flex flex-col items-center space-y-2">
+                    <img
+                      src={items[activeIndex]?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"}
+                      alt={items[activeIndex]?.name?.[lang] || ''}
+                      referrerPolicy="no-referrer"
+                      className="w-14 h-14 rounded-full object-cover border-2 border-brand-purple dark:border-brand-secondary shadow-md"
+                    />
+                    <div>
+                      <h4 className="font-display font-extrabold text-[#1A0B2E] dark:text-white">
+                        {items[activeIndex]?.name?.[lang] || ''}
+                      </h4>
+                      <p className="text-xs text-[#1A0B2E]/70 dark:text-gray-500 font-semibold">
+                        {items[activeIndex]?.role?.[lang] || ''}
+                      </p>
+                      {items[activeIndex]?.channelName && (
+                        <span className="inline-block text-[10px] font-mono px-2 py-0.5 bg-black/5 border border-[#1A0B2E]/10 text-brand-purple dark:bg-white/5 dark:border-white/5 dark:text-brand-secondary rounded mt-1.5 font-bold">
+                          {items[activeIndex]?.channelName}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
 
-          {/* Slider controls */}
-          <div className="flex items-center justify-center gap-4 mt-8" id="testimonials-controls">
-            <button
-              onClick={handlePrev}
-              className="p-3 bg-black/5 border border-[#1A0B2E]/10 hover:bg-black/10 dark:bg-white/5 dark:border-white/5 dark:hover:bg-white/10 text-[#1A0B2E] dark:text-white rounded-full transition-all duration-200 active:scale-95 cursor-pointer"
-              aria-label="Previous testimonial"
-              id="testimonials-btn-prev"
-            >
-              {lang === 'ar' ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
-            </button>
-
-            {/* Slider dot indicators */}
-            <div className="flex gap-2">
-              {items.map((_, idx) => (
+              {/* Slider controls */}
+              <div className="flex items-center justify-center gap-4 mt-8" id="testimonials-controls">
                 <button
-                  key={idx}
-                  onClick={() => setActiveIndex(idx)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    activeIndex === idx ? 'bg-brand-purple dark:bg-brand-secondary w-6' : 'bg-black/15 dark:bg-white/20'
-                  }`}
-                  aria-label={`Go to slide ${idx + 1}`}
-                  id={`testimonial-indicator-${idx}`}
-                />
-              ))}
-            </div>
+                  onClick={handlePrev}
+                  className="p-3 bg-black/5 border border-[#1A0B2E]/10 hover:bg-black/10 dark:bg-white/5 dark:border-white/5 dark:hover:bg-white/10 text-[#1A0B2E] dark:text-white rounded-full transition-all duration-200 active:scale-95 cursor-pointer"
+                  aria-label="Previous testimonial"
+                  id="testimonials-btn-prev"
+                >
+                  {lang === 'ar' ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
+                </button>
 
-            <button
-              onClick={handleNext}
-              className="p-3 bg-black/5 border border-[#1A0B2E]/10 hover:bg-black/10 dark:bg-white/5 dark:border-white/5 dark:hover:bg-white/10 text-[#1A0B2E] dark:text-white rounded-full transition-all duration-200 active:scale-95 cursor-pointer"
-              aria-label="Next testimonial"
-              id="testimonials-btn-next"
-            >
-              {lang === 'ar' ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
-            </button>
-          </div>
+                {/* Slider dot indicators */}
+                <div className="flex gap-2">
+                  {items.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveIndex(idx)}
+                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                        activeIndex === idx ? 'bg-brand-purple dark:bg-brand-secondary w-6' : 'bg-black/15 dark:bg-white/20'
+                      }`}
+                      aria-label={`Go to slide ${idx + 1}`}
+                      id={`testimonial-indicator-${idx}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleNext}
+                  className="p-3 bg-black/5 border border-[#1A0B2E]/10 hover:bg-black/10 dark:bg-white/5 dark:border-white/5 dark:hover:bg-white/10 text-[#1A0B2E] dark:text-white rounded-full transition-all duration-200 active:scale-95 cursor-pointer"
+                  aria-label="Next testimonial"
+                  id="testimonials-btn-next"
+                >
+                  {lang === 'ar' ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12 text-gray-500 text-xs font-mono">
+              {lang === 'ar' ? 'لا توجد شهادات معروضة حالياً.' : 'No testimonials currently showcased.'}
+            </div>
+          )}
         </div>
       </div>
     </section>

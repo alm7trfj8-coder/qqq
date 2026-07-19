@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Film, Tv, Image, Sparkles, Briefcase, Share2, ArrowUpRight } from 'lucide-react';
-import { siteConfig } from '../config/site';
 import { Language } from '../types';
+import { useSiteConfig } from '../context/SiteConfigContext';
+import { siteConfig } from '../config/site';
 
 interface ServicesProps {
   lang: Language;
@@ -18,10 +19,14 @@ const iconMap: Record<string, React.ComponentType<{ size: number; className?: st
 };
 
 export default function Services({ lang }: ServicesProps) {
-  // Safe fallback if some config values are missing
-  const servicesTitle = siteConfig.copy.services.title[lang] || "خدمات تحاكي دقة السينما";
-  const servicesSubtitle = siteConfig.copy.services.subtitle[lang] || "نهتم بكل تفصيل فني";
-  const serviceItems = siteConfig.copy.services.items || [];
+  const { siteData } = useSiteConfig();
+
+  if (!siteData.showServicesSection) return null;
+
+  // Load from dynamic SiteConfigContext state
+  const servicesTitle = siteConfig.copy.services.title[lang];
+  const servicesSubtitle = siteConfig.copy.services.subtitle[lang];
+  const serviceItems = siteData.servicesList.filter(item => item.visible !== false);
 
   return (
     <section className="py-24 bg-transparent relative overflow-hidden" id="services">
@@ -103,10 +108,10 @@ export default function Services({ lang }: ServicesProps) {
                     {service.benefit[lang]}
                   </span>
                   <a 
-                    href={`https://wa.me/${siteConfig.whatsappNumber === "{{WHATSAPP}}" ? "201012345678" : siteConfig.whatsappNumber}?text=${encodeURIComponent(
+                    href={`https://wa.me/${siteData.contactWhatsApp}?text=${encodeURIComponent(
                       lang === 'ar' 
-                        ? `مرحباً، أود طلب خدمة: ${service.title.ar}` 
-                        : `Hi! I want to request: ${service.title.en}`
+                        ? `مرحباً، أود بدء العمل على خدمة: ${service.title.ar}` 
+                        : `Hi! I want to start a project for: ${service.title.en}`
                     )}`}
                     target="_blank"
                     referrerPolicy="no-referrer"

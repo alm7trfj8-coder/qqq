@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   MessageCircle, Mail, Send, CheckCircle, ArrowRight, 
-  ShieldCheck, MapPin, Smartphone
+  ShieldCheck, MapPin
 } from 'lucide-react';
-import { siteConfig } from '../config/site';
 import { Language } from '../types';
 import { playAudio } from '../utils/audio';
+import { useSiteConfig } from '../context/SiteConfigContext';
+import { siteConfig } from '../config/site';
 
 interface ContactProps {
   lang: Language;
 }
 
 export default function Contact({ lang }: ContactProps) {
+  const { siteData } = useSiteConfig();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submittedData, setSubmittedData] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -23,6 +25,8 @@ export default function Contact({ lang }: ContactProps) {
     budget: '300-700',
     message: '',
   });
+
+  if (!siteData.showContactSection) return null;
 
   const title = siteConfig.copy.contact.title[lang];
   const subtitle = siteConfig.copy.contact.subtitle[lang];
@@ -110,7 +114,7 @@ Looking forward to your response to kick off production!`;
 
   // Dynamic WhatsApp Link based on submittedData or fallback
   const getWhatsAppSubmitUrl = (data: any) => {
-    const number = siteConfig.whatsappNumber === "{{WHATSAPP}}" ? "201012345678" : siteConfig.whatsappNumber;
+    const number = siteData.contactWhatsApp || "201012345678";
     const cleanNumber = number.replace(/[^0-9]/g, '');
     const text = generateMessageText(data || formData);
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(text)}`;
@@ -118,28 +122,23 @@ Looking forward to your response to kick off production!`;
 
   // Dynamic Email link based on submittedData or fallback
   const getEmailSubmitUrl = (data: any) => {
-    const emailAddr = siteConfig.email === "{{EMAIL}}" ? "contact@cinemavision.com" : siteConfig.email;
+    const emailAddr = siteData.contactEmail || "contact@cinemavision.com";
     const subject = lang === 'ar' ? `طلب مشروع جديد من العميل: ${data?.name || formData.name}` : `New Project Request from client: ${data?.name || formData.name}`;
     const body = generateMessageText(data || formData);
     return `mailto:${emailAddr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
-  const cleanOwnerName = siteConfig.ownerName === "{{OWNER_NAME}}"
-    ? (lang === 'ar' ? 'أحمد الشريف' : 'Ahmed El-Sherif')
-    : siteConfig.ownerName;
+  const cleanOwnerName = (siteData as any).contactOwnerName?.[lang] || siteConfig.ownerName || (lang === 'ar' ? 'أحمد الشريف' : 'Ahmed El-Sherif');
+  const cleanCity = (siteData as any).contactCity?.[lang] || siteConfig.city?.[lang] || (lang === 'ar' ? 'القاهرة، مصر' : 'Cairo, Egypt');
 
-  const cleanCity = siteConfig.city[lang] === `{{CITY}}`
-    ? (lang === 'ar' ? 'القاهرة، مصر' : 'Cairo, Egypt')
-    : siteConfig.city[lang];
-
-  const whatsappNumberClean = (siteConfig.whatsappNumber === "{{WHATSAPP}}" ? "201012345678" : siteConfig.whatsappNumber).replace(/[^0-9]/g, '');
+  const whatsappNumberClean = (siteData.contactWhatsApp || "201012345678").replace(/[^0-9]/g, '');
   const whatsappUrl = `https://wa.me/${whatsappNumberClean}?text=${encodeURIComponent(
     lang === 'ar' 
       ? `مرحباً، أود استشارة سريعة بشأن مشروع مونتاج وإنتاج جديد!` 
       : `Hi, I am looking to schedule an urgent cinematic production consult!`
   )}`;
 
-  const emailUrl = `mailto:${siteConfig.email === "{{EMAIL}}" ? "contact@cinemavision.com" : siteConfig.email}`;
+  const emailUrl = `mailto:${siteData.contactEmail || "contact@cinemavision.com"}`;
 
   return (
     <section className="py-24 bg-transparent relative overflow-hidden border-t border-[#1A0B2E]/10 dark:border-white/5" id="contact">
@@ -207,7 +206,7 @@ Looking forward to your response to kick off production!`;
                 id="contact-email-direct"
               >
                 <Mail size={18} />
-                <span>{siteConfig.email === "{{EMAIL}}" ? "contact@cinemavision.com" : siteConfig.email}</span>
+                <span>{siteData.contactEmail || "contact@cinemavision.com"}</span>
               </a>
             </div>
           </div>
@@ -434,7 +433,6 @@ Looking forward to your response to kick off production!`;
           </div>
         </div>
       </div>
-
     </section>
   );
 }

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { siteConfig } from '../config/site';
 import { Language } from '../types';
+import { useSiteConfig } from '../context/SiteConfigContext';
 
 interface CaseStudiesProps {
   lang: Language;
@@ -15,6 +16,10 @@ interface CaseStudiesProps {
 type TabType = 'facebook' | 'youtube' | 'thumbnails' | 'facebook_page';
 
 export default function CaseStudies({ lang }: CaseStudiesProps) {
+  const { siteData } = useSiteConfig();
+
+  if (!siteData.showCaseStudiesSection) return null;
+
   const [activeTab, setActiveTab] = useState<TabType>('facebook');
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 

@@ -10,6 +10,7 @@ import Timeline from './components/Timeline';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import AdminPanel from './components/AdminPanel';
 import { Language } from './types';
 import { ArrowUp } from 'lucide-react';
 import { playAudio } from './utils/audio';
@@ -19,6 +20,7 @@ export default function App() {
   const [lang, setLang] = useState<Language>('ar');
   const [isMobile, setIsMobile] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
 
   // Scroll lock for welcome overlay
   useEffect(() => {
@@ -275,7 +277,14 @@ export default function App() {
       </main>
 
       {/* Global Footer */}
-      <Footer lang={lang} />
+      <Footer lang={lang} onAdminTrigger={() => setShowAdmin(true)} />
+
+      {/* Admin Panel overlay */}
+      <AnimatePresence>
+        {showAdmin && (
+          <AdminPanel lang={lang} onClose={() => setShowAdmin(false)} />
+        )}
+      </AnimatePresence>
 
       {/* Back to Top Button */}
       <AnimatePresence>

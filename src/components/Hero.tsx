@@ -7,6 +7,7 @@ import {
 import { siteConfig } from '../config/site';
 import { Language } from '../types';
 import { playAudio } from '../utils/audio';
+import { useSiteConfig } from '../context/SiteConfigContext';
 
 interface HeroProps {
   lang: Language;
@@ -14,6 +15,7 @@ interface HeroProps {
 }
 
 export default function Hero({ lang, isStarted }: HeroProps) {
+  const { siteData } = useSiteConfig();
   const [showModal, setShowModal] = useState(false);
   const timecode = "01:24:42:09";
 
@@ -107,20 +109,18 @@ export default function Hero({ lang, isStarted }: HeroProps) {
     : siteConfig.copy.hero.shortDesc[lang];
 
   // Prefilled WhatsApp link
-  const whatsappUrl = `https://wa.me/${siteConfig.whatsappNumber === "{{WHATSAPP}}" ? "201012345678" : siteConfig.whatsappNumber}?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/${siteData.contactWhatsApp}?text=${encodeURIComponent(
     lang === 'ar' ? "مرحباً، أود بدء مشروعي الإبداعي الجديد معكم!" : "Hi, I'd like to initiate my new creative project with you!"
   )}`;
 
-  // Showreel embed URL or fallback placeholder YouTube video
-  const showreelEmbed = siteConfig.showreelUrl === "{{SHOWREEL_URL}}"
-    ? "https://www.youtube.com/embed/gH86W6Y5M1Y?autoplay=1&mute=0"
-    : siteConfig.showreelUrl;
+  // Showreel embed URL loaded dynamically from site config state
+  const showreelEmbed = siteData.showreelUrl || "https://www.youtube.com/embed/gH86W6Y5M1Y";
 
   const statsList = [
-    { value: `+${siteConfig.stats.projectsCount}`, label: { ar: "مشروع مُكتمل", en: "Completed Projects" } },
-    { value: `+${siteConfig.stats.clientsCount}`, label: { ar: "شريك نجاح", en: "Happy Clients" } },
-    { value: `${siteConfig.stats.platformsCount}`, label: { ar: "منصات توزيع", en: "Target Platforms" } },
-    { value: `${siteConfig.stats.avgDeliveryDays} ${lang === 'ar' ? 'أيام' : 'Days'}`, label: { ar: "متوسط التسليم", en: "Avg. Delivery" } },
+    { value: `+${siteData.stats.projectsCount}`, label: { ar: "مشروع مُكتمل", en: "Completed Projects" } },
+    { value: `+${siteData.stats.clientsCount}`, label: { ar: "شريك نجاح", en: "Happy Clients" } },
+    { value: `${siteData.stats.platformsCount}`, label: { ar: "منصات توزيع", en: "Target Platforms" } },
+    { value: `${siteData.stats.avgDeliveryDays} ${lang === 'ar' ? 'أيام' : 'Days'}`, label: { ar: "متوسط التسليم", en: "Avg. Delivery" } },
   ];
 
   const handleOpenShowreel = () => {
@@ -290,64 +290,42 @@ export default function Hero({ lang, isStarted }: HeroProps) {
             </motion.div>
 
             {/* Micro assurances trust row */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.65 }}
-              className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-white/10"
-              id="hero-trust-indicators"
-            >
-              <motion.div 
-                whileHover={{ y: -3, scale: 1.02 }}
-                className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-[#FF2D7A]/40 hover:bg-[#FF2D7A]/5 transition-all duration-300 shadow-md"
+            {siteData.showFeaturesSection && (
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.65 }}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-white/10"
+                id="hero-trust-indicators"
               >
-                <div className="p-2 rounded-xl bg-[#FF2D7A]/15 text-[#FF2D7A] shrink-0">
-                  <Shield size={18} />
-                </div>
-                <div className="text-right sm:text-start">
-                  <p className="text-xs font-bold text-white leading-tight">
-                    {lang === 'ar' ? "حقوق تجارية كاملة للمقاطع" : "100% Commercial Rights"}
-                  </p>
-                  <p className="text-[10px] text-gray-500 mt-0.5">
-                    {lang === 'ar' ? "أمان قانوني مطلق للمحتوى" : "Complete copyright security"}
-                  </p>
-                </div>
-              </motion.div>
+                {siteData.featuresList.filter(f => f.visible !== false).map((feat, idx) => {
+                  const borderColors = ['hover:border-[#FF2D7A]/40 hover:bg-[#FF2D7A]/5', 'hover:border-[#FF8A00]/40 hover:bg-[#FF8A00]/5', 'hover:border-brand-purple/40 hover:bg-brand-purple/5'];
+                  const iconColors = ['bg-[#FF2D7A]/15 text-[#FF2D7A]', 'bg-[#FF8A00]/15 text-[#FF8A00]', 'bg-brand-purple/20 text-[#D8B4FE]'];
+                  const borderClass = borderColors[idx % borderColors.length];
+                  const iconClass = iconColors[idx % iconColors.length];
 
-              <motion.div 
-                whileHover={{ y: -3, scale: 1.02 }}
-                className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-[#FF8A00]/40 hover:bg-[#FF8A00]/5 transition-all duration-300 shadow-md"
-              >
-                <div className="p-2 rounded-xl bg-[#FF8A00]/15 text-[#FF8A00] shrink-0">
-                  <Clock size={18} />
-                </div>
-                <div className="text-right sm:text-start">
-                  <p className="text-xs font-bold text-white leading-tight">
-                    {lang === 'ar' ? "تعديلات واضحة وسريعة" : "Fast Precise Revisions"}
-                  </p>
-                  <p className="text-[10px] text-gray-500 mt-0.5">
-                    {lang === 'ar' ? "تعديلات فورية ودقيقة" : "Direct & responsive adjustments"}
-                  </p>
-                </div>
+                  return (
+                    <motion.div 
+                      key={feat.id}
+                      whileHover={{ y: -3, scale: 1.02 }}
+                      className={`flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 ${borderClass} transition-all duration-300 shadow-md`}
+                    >
+                      <div className={`p-2 rounded-xl ${iconClass} shrink-0`}>
+                        {feat.icon === 'Shield' ? <Shield size={18} /> : feat.icon === 'Clock' ? <Clock size={18} /> : <Award size={18} />}
+                      </div>
+                      <div className="text-right sm:text-start">
+                        <p className="text-xs font-bold text-white leading-tight">
+                          {feat.title[lang]}
+                        </p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">
+                          {feat.desc[lang]}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </motion.div>
-
-              <motion.div 
-                whileHover={{ y: -3, scale: 1.02 }}
-                className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-brand-purple/40 hover:bg-brand-purple/5 transition-all duration-300 shadow-md"
-              >
-                <div className="p-2 rounded-xl bg-brand-purple/20 text-[#D8B4FE] shrink-0">
-                  <Award size={18} />
-                </div>
-                <div className="text-right sm:text-start">
-                  <p className="text-xs font-bold text-white leading-tight">
-                    {lang === 'ar' ? "جودة تليق بقنوات المليون" : "Million-Scale Quality"}
-                  </p>
-                  <p className="text-[10px] text-gray-500 mt-0.5">
-                    {lang === 'ar' ? "معايير إنتاج عالمية فائقة" : "Industry-leading production"}
-                  </p>
-                </div>
-              </motion.div>
-            </motion.div>
+            )}
           </div>
 
           {/* DESKTOP ONLY: Optimized Showreel (5 columns) */}
@@ -364,24 +342,26 @@ export default function Hero({ lang, isStarted }: HeroProps) {
         </div>
 
         {/* Mini Stats Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 bg-white/[0.02] border border-white/5 rounded-2xl p-6 md:p-8 backdrop-blur-sm"
-          id="hero-stats-row"
-        >
-          {statsList.map((stat, idx) => (
-            <div key={idx} className="text-center md:text-start" id={`stat-item-${idx}`}>
-              <div className="font-display font-extrabold text-3xl md:text-4xl text-white tracking-tight">
-                {stat.value}
+        {siteData.showHeroStats && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 bg-white/[0.02] border border-white/5 rounded-2xl p-6 md:p-8 backdrop-blur-sm"
+            id="hero-stats-row"
+          >
+            {statsList.map((stat, idx) => (
+              <div key={idx} className="text-center md:text-start" id={`stat-item-${idx}`}>
+                <div className="font-display font-extrabold text-3xl md:text-4xl text-white tracking-tight">
+                  {stat.value}
+                </div>
+                <div className="text-xs md:text-sm text-gray-500 mt-1 font-semibold">
+                  {stat.label[lang]}
+                </div>
               </div>
-              <div className="text-xs md:text-sm text-gray-500 mt-1 font-semibold">
-                {stat.label[lang]}
-              </div>
-            </div>
-          ))}
-        </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
 
       {/* Showreel Lightbox Modal */}

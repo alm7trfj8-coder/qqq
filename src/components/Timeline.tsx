@@ -1,15 +1,20 @@
 import { motion } from 'motion/react';
-import { siteConfig } from '../config/site';
 import { Language } from '../types';
+import { useSiteConfig } from '../context/SiteConfigContext';
+import { siteConfig } from '../config/site';
 
 interface TimelineProps {
   lang: Language;
 }
 
 export default function Timeline({ lang }: TimelineProps) {
+  const { siteData } = useSiteConfig();
+
+  if (!siteData.showTimelineSection) return null;
+
   const title = siteConfig.copy.process.title[lang];
   const subtitle = siteConfig.copy.process.subtitle[lang];
-  const steps = siteConfig.copy.process.steps;
+  const steps = siteData.timelineSteps;
 
   return (
     <section className="py-24 bg-transparent relative overflow-hidden border-t border-[#1A0B2E]/10 dark:border-white/5" id="process">
@@ -83,7 +88,7 @@ export default function Timeline({ lang }: TimelineProps) {
                       viewport={{ once: true }}
                       transition={{ type: "spring", damping: 15 }}
                       className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-mono text-sm font-extrabold bg-[#1A0B2E]/10 border-[#1A0B2E] text-[#1A0B2E] dark:bg-brand-dark transition-all duration-300 ${
-                        idx === 2 
+                        idx % 3 === 2 
                           ? 'border-brand-accent text-brand-accent shadow-lg shadow-brand-accent/20' 
                           : 'dark:border-brand-secondary dark:text-brand-secondary'
                       }`}
