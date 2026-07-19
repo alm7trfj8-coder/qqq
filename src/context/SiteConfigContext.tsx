@@ -83,6 +83,15 @@ export interface TestimonialItem {
   isClientSubmitted?: boolean;
 }
 
+// Team Member Item
+export interface TeamMemberItem {
+  id: string;
+  name: { ar: string; en: string };
+  role: { ar: string; en: string };
+  imageUrl: string;
+  visible: boolean;
+}
+
 // Site Data Schema
 export interface SiteConfigState {
   adminPassword: string;
@@ -102,6 +111,7 @@ export interface SiteConfigState {
   showServicesSection: boolean;
   showTimelineSection: boolean;
   showTestimonialsSection: boolean;
+  showTeamSection: boolean;
   showContactSection: boolean;
   showContactCard: boolean; // hide/show actual brief form card
 
@@ -122,6 +132,7 @@ export interface SiteConfigState {
   servicesList: ServiceItem[];
   timelineSteps: TimelineStepItem[];
   testimonialsList: TestimonialItem[];
+  teamMembersList: TeamMemberItem[];
   
   // Contact details
   contactWhatsApp: string;
@@ -156,6 +167,7 @@ const defaultState: SiteConfigState = {
   showServicesSection: true,
   showTimelineSection: true,
   showTestimonialsSection: true,
+  showTeamSection: true,
   showContactSection: true,
   showContactCard: true,
 
@@ -352,6 +364,23 @@ const defaultState: SiteConfigState = {
       content: { ar: "أشكرهم على الإتقان والالتزام الرهيب في إطلاق هوية تطبيقنا وتصميم صور المتجر والفيديو الترويجي.", en: "Unbelievable mastery and dedication during our app launch. The promo trailer generated immediate viral hype." },
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200",
       rating: 5,
+      visible: true
+    }
+  ],
+
+  teamMembersList: [
+    {
+      id: 'member1',
+      name: { ar: "أحمد الشريف", en: "Ahmed El-Sherif" },
+      role: { ar: "شريك مؤسس / المخرج الإبداعي", en: "Co-founder / Creative Director" },
+      imageUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
+      visible: true
+    },
+    {
+      id: 'member2',
+      name: { ar: "مازن علي", en: "Mazen Ali" },
+      role: { ar: "رئيس قسم الموشن جرافيك", en: "Lead Motion Designer" },
+      imageUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
       visible: true
     }
   ],

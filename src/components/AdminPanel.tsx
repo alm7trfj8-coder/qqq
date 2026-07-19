@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useSiteConfig, FeatureItem, ProjectItem, CaseStudyItem, ThumbnailItem, ServiceItem, TimelineStepItem, TestimonialItem } from '../context/SiteConfigContext';
+import { useSiteConfig, FeatureItem, ProjectItem, CaseStudyItem, ThumbnailItem, ServiceItem, TimelineStepItem, TestimonialItem, TeamMemberItem } from '../context/SiteConfigContext';
 import { 
   X, Save, Lock, Shield, Clock, Award, Plus, Trash2, ArrowUp, ArrowDown, 
-  Settings, Film, Image, Tv, Info, MessageSquare, Phone, Share2, Eye, EyeOff, Check, AlertCircle, Volume2, VolumeX, RefreshCw
+  Settings, Film, Image, Tv, Info, MessageSquare, Phone, Share2, Eye, EyeOff, Check, AlertCircle, Volume2, VolumeX, RefreshCw, Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Language } from '../types';
@@ -34,7 +34,7 @@ export default function AdminPanel({ lang, onClose }: AdminPanelProps) {
   const [pwdMessage, setPwdMessage] = useState<{ text: string; error: boolean } | null>(null);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<'general' | 'hero' | 'portfolio' | 'cases' | 'services' | 'timeline' | 'testimonials' | 'contact'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'hero' | 'portfolio' | 'cases' | 'services' | 'timeline' | 'testimonials' | 'team' | 'contact'>('general');
 
   // Pulsing Save Action
   const [isSaving, setIsSaving] = useState(false);
@@ -225,6 +225,7 @@ export default function AdminPanel({ lang, onClose }: AdminPanelProps) {
               { id: 'services', label: lang === 'ar' ? 'الخدمات وباقات العمل' : 'Services & Offers', icon: Info },
               { id: 'timeline', label: lang === 'ar' ? 'خطوات ورحلة العمل' : 'Work Process Steps', icon: Clock },
               { id: 'testimonials', label: lang === 'ar' ? 'آراء شركاء النجاح' : 'Success Stories', icon: MessageSquare },
+              { id: 'team', label: lang === 'ar' ? 'أعضاء الفريق والشركة' : 'Team Members', icon: Users },
               { id: 'contact', label: lang === 'ar' ? 'بيانات الاتصال والسوشيال' : 'Contact & Platforms', icon: Phone },
             ].map((tab) => {
               const TabIcon = tab.icon;
@@ -1466,6 +1467,177 @@ export default function AdminPanel({ lang, onClose }: AdminPanelProps) {
                 >
                   <Plus size={14} />
                   <span>{lang === 'ar' ? 'إضافة رأي عميل جديد' : 'Add Custom Client Testimonial'}</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: TEAM MEMBERS */}
+          {activeTab === 'team' && (
+            <div className="space-y-8 max-w-3xl">
+              <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="space-y-1">
+                  <h3 className="text-lg font-display font-bold text-white">
+                    {lang === 'ar' ? 'إدارة أعضاء الفريق والشركة' : 'Manage Team & Company Members'}
+                  </h3>
+                  <p className="text-xs text-gray-400">
+                    {lang === 'ar' ? 'إضافة موظفين جدد، وتعديل المسميات الوظيفية، وصورهم الشخصية، أو إخفائهم مؤقتاً.' : 'Add new colleagues, modify job descriptions, update profile links, or hide them.'}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => updateSiteData({ showTeamSection: !siteData.showTeamSection })}
+                  className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
+                    siteData.showTeamSection 
+                      ? 'bg-[#FF2D7A]/15 border-[#FF2D7A]/40 text-[#FF2D7A]' 
+                      : 'bg-white/5 border-white/10 text-gray-500'
+                  }`}
+                  title={siteData.showTeamSection ? (lang === 'ar' ? 'القسم مرئي حالياً' : 'Section is visible') : (lang === 'ar' ? 'القسم مخفي حالياً' : 'Section is hidden')}
+                >
+                  {siteData.showTeamSection ? <Eye size={16} /> : <EyeOff size={16} />}
+                </button>
+              </div>
+
+              {/* Team items loop */}
+              <div className="space-y-4">
+                {(siteData.teamMembersList || []).map((member, idx) => (
+                  <div key={member.id} className="p-5 rounded-2xl bg-[#0d071c]/50 border border-white/5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                      <div className="flex items-center gap-2">
+                        <img src={member.imageUrl} alt="member" className="w-8 h-8 rounded-full border border-white/10 object-cover" referrerPolicy="no-referrer" />
+                        <div>
+                          <h4 className="text-xs font-bold text-white">{member.name.ar || member.name.en}</h4>
+                          <p className="text-[10px] text-gray-500">{member.role.ar || member.role.en}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {/* Visibility individual toggle */}
+                        <button
+                          onClick={() => {
+                            const updated = [...siteData.teamMembersList];
+                            updated[idx].visible = updated[idx].visible === false ? true : false;
+                            updateSiteData({ teamMembersList: updated });
+                          }}
+                          className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                            member.visible !== false
+                              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20'
+                              : 'bg-white/5 border-white/10 text-gray-500 hover:bg-white/10'
+                          }`}
+                          title={member.visible !== false ? (lang === 'ar' ? 'عضو مرئي' : 'Visible member') : (lang === 'ar' ? 'عضو مخفي' : 'Hidden member')}
+                        >
+                          {member.visible !== false ? <Eye size={12} /> : <EyeOff size={12} />}
+                        </button>
+
+                        {/* Delete member */}
+                        <button
+                          onClick={() => {
+                            const updated = siteData.teamMembersList.filter(m => m.id !== member.id);
+                            updateSiteData({ teamMembersList: updated });
+                          }}
+                          className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/15 transition-all cursor-pointer"
+                          title="Delete member"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Name Arabic */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] text-gray-400">{lang === 'ar' ? 'الاسم بالكامل (عربي)' : 'Full Name (Arabic)'}</label>
+                        <input 
+                          type="text"
+                          value={member.name.ar}
+                          onChange={(e) => {
+                            const updated = [...siteData.teamMembersList];
+                            updated[idx].name.ar = e.target.value;
+                            updateSiteData({ teamMembersList: updated });
+                          }}
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                        />
+                      </div>
+
+                      {/* Name English */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] text-gray-400">{lang === 'ar' ? 'الاسم بالكامل (إنجليزي)' : 'Full Name (English)'}</label>
+                        <input 
+                          type="text"
+                          value={member.name.en}
+                          onChange={(e) => {
+                            const updated = [...siteData.teamMembersList];
+                            updated[idx].name.en = e.target.value;
+                            updateSiteData({ teamMembersList: updated });
+                          }}
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                        />
+                      </div>
+
+                      {/* Role Arabic */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] text-gray-400">{lang === 'ar' ? 'المسمى الوظيفي (عربي)' : 'Job Title (Arabic)'}</label>
+                        <input 
+                          type="text"
+                          value={member.role.ar}
+                          onChange={(e) => {
+                            const updated = [...siteData.teamMembersList];
+                            updated[idx].role.ar = e.target.value;
+                            updateSiteData({ teamMembersList: updated });
+                          }}
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                        />
+                      </div>
+
+                      {/* Role English */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] text-gray-400">{lang === 'ar' ? 'المسمى الوظيفي (إنجليزي)' : 'Job Title (English)'}</label>
+                        <input 
+                          type="text"
+                          value={member.role.en}
+                          onChange={(e) => {
+                            const updated = [...siteData.teamMembersList];
+                            updated[idx].role.en = e.target.value;
+                            updateSiteData({ teamMembersList: updated });
+                          }}
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                        />
+                      </div>
+
+                      {/* Image URL */}
+                      <div className="space-y-1 md:col-span-2">
+                        <label className="text-[10px] text-gray-400">{lang === 'ar' ? 'رابط الصورة الشخصية' : 'Profile Image URL'}</label>
+                        <input 
+                          type="text"
+                          value={member.imageUrl}
+                          onChange={(e) => {
+                            const updated = [...siteData.teamMembersList];
+                            updated[idx].imageUrl = e.target.value;
+                            updateSiteData({ teamMembersList: updated });
+                          }}
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <button
+                  onClick={() => {
+                    const newId = `member_${Date.now()}`;
+                    const newMember: TeamMemberItem = {
+                      id: newId,
+                      name: { ar: 'عضو فريق جديد', en: 'New Team Colleague' },
+                      role: { ar: 'محرر فيديو / مصمم حركة', en: 'Video Editor / Lead Motion Designer' },
+                      imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+                      visible: true
+                    };
+                    updateSiteData({ teamMembersList: [...(siteData.teamMembersList || []), newMember] });
+                  }}
+                  className="w-full py-4 border border-dashed border-white/10 hover:border-[#FF2D7A]/50 hover:bg-[#FF2D7A]/5 rounded-2xl flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-white transition-all cursor-pointer"
+                >
+                  <Plus size={14} />
+                  <span>{lang === 'ar' ? 'إضافة موظف/عضو جديد' : 'Add New Colleague / Team Member'}</span>
                 </button>
               </div>
             </div>

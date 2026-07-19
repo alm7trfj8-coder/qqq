@@ -8,6 +8,7 @@ import CaseStudies from './components/CaseStudies';
 import ThumbnailsWall from './components/ThumbnailsWall';
 import Timeline from './components/Timeline';
 import Testimonials from './components/Testimonials';
+import Team from './components/Team';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AdminPanel from './components/AdminPanel';
@@ -271,6 +272,9 @@ export default function App() {
 
         {/* Testimonials Carousel (آراء شركاء النجاح) */}
         <Testimonials lang={lang} />
+
+        {/* Team Members Section (أعضاء الشركة) */}
+        <Team lang={lang} />
 
         {/* Interactive Brief questionnaire (تواصل معنا) */}
         <Contact lang={lang} />

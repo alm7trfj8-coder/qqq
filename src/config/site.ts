@@ -143,6 +143,10 @@ export interface SiteConfig {
         rating: number;
       }>;
     };
+    team: {
+      title: { ar: string; en: string };
+      subtitle: { ar: string; en: string };
+    };
     faqs: {
       title: { ar: string; en: string };
       subtitle: { ar: string; en: string };
@@ -760,6 +764,17 @@ export const siteConfig: SiteConfig = {
           rating: 5
         }
       ]
+    },
+
+    team: {
+      title: {
+        ar: "صناع التميز البصري",
+        en: "Meet the Team"
+      },
+      subtitle: {
+        ar: "نخبة من المخرجين الإبداعيين ومصممي الحركة الملتزمين بتحويل رؤيتك إلى تحفة بصرية.",
+        en: "An elite force of creative directors and motion editors dedicated to forging your next masterpiece."
+      }
     },
 
     faqs: {
